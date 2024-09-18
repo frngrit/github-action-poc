@@ -18,7 +18,7 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/repos/frngrit/github-action-poc/actions/runs/${{ github.run_id }}/pending_deployments \
-            -d '{"environment_ids":[4022306956],"state":"rejected","comment":"Rejected because triggered job1"}'
+            -d '{"environment_ids":[4022306957],"state":"rejected","comment":"Rejected because triggered job1"}'
 
   job2:
     runs-on: ubuntu-latest
@@ -32,7 +32,7 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/repos/frngrit/github-action-poc/actions/runs/${{ github.run_id }}/pending_deployments \
-            -d '{"environment_ids":[4022306957],"state":"rejected","comment":"Rejected because triggered job2"}'
+            -d '{"environment_ids":[4022306956],"state":"rejected","comment":"Rejected because triggered job2"}'
 
   job3:
     needs: [job1, job2]
