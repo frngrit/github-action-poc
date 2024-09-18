@@ -1,0 +1,45 @@
+name: Example automate cancel
+
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    environment: job1
+    steps:
+      - run: echo "Job1 approved"
+      - run: | 
+          curl -L \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/frngrit/github-action-poc/actions/runs/${{ github.run_id }}/pending_deployments \
+            -d '{"environment_ids":[2039639179],"state":"rejected","comment":"Rejected because triggered job1"}'
+  
+  job2:
+    runs-on: ubuntu-latest
+    environment: job2
+    steps:
+      - run: echo "Job2 approved"
+      - run: | 
+          curl -L \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/frngrit/github-action-poc/actions/runs/${{ github.run_id }}/pending_deployments \
+            -d '{"environment_ids":[2039638534],"state":"rejected","comment":"Rejected because triggered job2"}'
+  
+  job3:
+    needs: [job1, job2]
+    runs-on: ubuntu-latest
+    if: | 
+      always() && 
+      ((needs.job1.result == 'success' && needs.job2.result == 'failure') || 
+      (needs.job1.result == 'failure' && needs.job2.result == 'success'))
+    steps:
+      - run: echo "Job3 complete!"
