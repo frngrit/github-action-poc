@@ -39,9 +39,6 @@ jobs:
   job3:
     needs: [job1, job2]
     runs-on: ubuntu-latest
-    if: |
-      always() && 
-      ((needs.job1.result == 'success' && needs.job2.result == 'failure') || 
-      (needs.job1.result == 'failure' && needs.job2.result == 'success'))
+    if: always()
     steps:
       - run: echo "Job3 complete!"
